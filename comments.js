@@ -1,27 +1,27 @@
 // create web server
+// npm install express
+// npm install body-parser
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
-const PORT = 3000;
-
-// import comments data
-const comments = require('./comments.json');
-
-// set view engine
-app.set('view engine', 'ejs');
-
-// get comments
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+// create comments array
+const comments = [
+    {name: 'name1', message: 'message1'},
+    {name: 'name2', message: 'message2'},
+];
+// show all comments
 app.get('/comments', (req, res) => {
-    res.render('comments', { comments: comments });
+    res.json(comments);
 });
-
-// get comment by id
-app.get('/comments/:id', (req, res) => {
-    const id = req.params.id;
-    const comment = comments.find(comment => comment.id === Number(id));
-    res.render('comment', { comment: comment });
+// add new comment
+app.post('/comments', (req, res) => {
+    const {name, message} = req.body;
+    comments.push({name, message});
+    res.json({status: 'success', message: 'comment added'});
 });
-
-// listen to PORT
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// start web server
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
 });
